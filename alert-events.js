@@ -1,7 +1,9 @@
 const axios = require('axios');
+const config = require('./config.json');
 
-const DISCORD_URL_WEBHOOK = 'https://discord.com/api/webhooks/911226552161796158/rD2iOyoCFRIvXcSOQSvsT69Vba0Lc7UWc9KIt1OYYcZ34KnOQH77kM72SQ2eUC6eUhLp';
-const SLACK_URL_WEBHOOK = 'https://hooks.slack.com/services/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';
+const DISCORD_URL_WEBHOOK = config.discord.url;
+const SLACK_URL_WEBHOOK = config.slack.url;
+const SLACK_CHANNEL = config.slack.channel;
 const NOTIFY_COLOR_MESSAGE = 12263456;
 
 const api = axios.create()
@@ -67,7 +69,7 @@ async function sendSlackMessage(message) {
     }
 
     const json = JSON.stringify({
-        "channel": "telemetry-machine",
+        "channel": SLACK_CHANNEL,
         "attachments": attachments
     })
 
