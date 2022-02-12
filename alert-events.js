@@ -44,6 +44,8 @@ function appendAdditionDescription(value_string, low_condition, high_condition){
             return "LOW"
         }
         return ""
+    }else{
+        return ""
     }
 }
 
