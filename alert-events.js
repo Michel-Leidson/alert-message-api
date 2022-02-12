@@ -3,7 +3,6 @@ const config = require('./config.json');
 
 const DISCORD_URL_WEBHOOK = config.discord.url;
 const SLACK_URL_WEBHOOK = config.slack.url;
-const SLACK_CHANNEL = config.slack.channel;
 const NOTIFY_COLOR_MESSAGE = 12263456;
 
 const api = axios.create()
@@ -125,7 +124,6 @@ async function sendSlackMessage(message) {
     }
 
     const json = JSON.stringify({
-        "channel": SLACK_CHANNEL,
         "attachments": attachments,
         "blocks": [
             {
