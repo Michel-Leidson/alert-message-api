@@ -13,14 +13,20 @@ function formatStringValue(string_value_text) {
     const array_key_values = string_value_text.split(" ");
     array_key_values.splice(0, 1);
     array_key_values.splice(array_key_values.length - 1, 1)
-    const array_sanitize = array_key_values.map(value => {
+    let array_sanitize = array_key_values.filter(value => {
         const raw_text = value.replaceAll(",", "").replaceAll("{", "").replaceAll("}", "").replaceAll("'", "");
         const splited_text = raw_text.split("=");
-        const output_text = `"${splited_text[0]}":"${splited_text[1]}"`
-        return output_text
+        if(splited_text[0]==="value"){
+            return true
+        }
+    })
+    array_sanitize = array_sanitize.map(value => {
+        const raw_text = value.replaceAll(",", "").replaceAll("{", "").replaceAll("}", "").replaceAll("'", "");
+        const splited_text = raw_text.split("=");
+        return `"${splited_text[0]}":"${splited_text[1]}"`
+        
     })
     const message_test = "{" + array_sanitize.join() + "}";
-    console.log(message_test);
     const parsed_test = JSON.parse(message_test);
     return parsed_test;
 }
