@@ -20,6 +20,7 @@ function formatStringValue(string_value_text) {
         return output_text
     })
     const message_test = "{" + array_sanitize.join() + "}";
+    console.log(message_test);
     const parsed_test = JSON.parse(message_test);
     return parsed_test;
 }
