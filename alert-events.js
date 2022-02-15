@@ -65,10 +65,12 @@ async function sendDiscordMessage(message) {
         const { low_condition, high_condition } = commonLabels;
         let aditional_text = appendAdditionDescription(__value_string__,low_condition,high_condition);
 
+        let { value } = formatStringValue(__value_string__);
+
         alerts.map(alert => {
             embeds.push({
                 "title": `(${alert.status.toUpperCase()}) ${message.commonLabels.alertname.toUpperCase()} ${aditional_text}`,
-                "description": `${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](https://telemetry.posbaker.com/alertmanager/#/alerts)`,
+                "description": `Value: ${value}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](https://telemetry.posbaker.com/alertmanager/#/alerts)`,
                 "url": `https://telemetry.posbaker.com/grafana/d/${message.commonAnnotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${message.commonAnnotations.__panelId__}`,
                 "color": (alert.status == 'firing' ? NOTIFY_COLOR_MESSAGE : 4109717)
             })
@@ -110,10 +112,12 @@ async function sendSlackMessage(message) {
         const { low_condition, high_condition } = commonLabels;
         let aditional_text = appendAdditionDescription(__value_string__,low_condition,high_condition);
 
+        let { value } = formatStringValue(__value_string__);
+
         alerts.map(alert => {
             attachments.push({
                 "title": `(${alert.status.toUpperCase()}) ${message.commonLabels.alertname.toUpperCase()} ${aditional_text}`,
-                "text": `${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
+                "text": `Value: ${value}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
                 "title_link": `https://telemetry.posbaker.com/grafana/d/${message.commonAnnotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${message.commonAnnotations.__panelId__}`,
                 "color": (alert.status == 'firing' ? '#FA2C23' : "#2DE64F")
 
