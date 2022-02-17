@@ -56,7 +56,7 @@ function appendAdditionDescription(value_string, low_condition, high_condition){
 }
 
 async function sendDiscordMessage(message) {
-    console.log("Message from alertmanager:",JSON.parse(JSON.stringify(message)))
+    console.log("timestamp="+new Date().toISOString(),"level=DEBUG","labels=input-message,discord","message="+JSON.stringify(message))
     const { status, alerts, commonAnnotations, commonLabels } = message;
     let embeds = [];
     alerts.map(alert =>{
@@ -73,7 +73,7 @@ async function sendDiscordMessage(message) {
         alerts.map(alert => {
             embeds.push({
                 "title": `(${alert.status.toUpperCase()}) ${message.commonLabels.alertname.toUpperCase()} ${aditional_text}`,
-                "description": `Value: ${parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](https://telemetry.posbaker.com/alertmanager/#/alerts)`,
+                "description": `Value: ${value === 'undefined' ? "-" : parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](https://telemetry.posbaker.com/alertmanager/#/alerts)`,
                 "url": `https://telemetry.posbaker.com/grafana/d/${message.commonAnnotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${message.commonAnnotations.__panelId__}`,
                 "color": (alert.status == 'firing' ? NOTIFY_COLOR_MESSAGE : 4109717)
             })
@@ -105,7 +105,7 @@ async function sendDiscordMessage(message) {
 }
 
 async function sendSlackMessage(message) {
-    console.log("Message from alertmanager:",JSON.parse(JSON.stringify(message)))
+    console.log("timestamp="+new Date().toISOString(),"level=DEBUG","labels=input-message,slack","message="+JSON.stringify(message))
     const { status, alerts, commonAnnotations, commonLabels } = message;
     let attachments = [];
     alerts.map(alert =>{
@@ -122,7 +122,7 @@ async function sendSlackMessage(message) {
         alerts.map(alert => {
             attachments.push({
                 "title": `(${alert.status.toUpperCase()}) ${message.commonLabels.alertname.toUpperCase()} ${aditional_text}`,
-                "text": `Value: ${parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
+                "text": `Value: ${value === 'undefined' ? "-" : parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
                 "title_link": `https://telemetry.posbaker.com/grafana/d/${message.commonAnnotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${message.commonAnnotations.__panelId__}`,
                 "color": (alert.status == 'firing' ? '#FA2C23' : "#2DE64F")
 
