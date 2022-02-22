@@ -1,21 +1,26 @@
 const express = require('express');
-const { sendDiscordMessage , sendSlackMessage} = require('./alert-events');
+const { sendDiscordMessage, sendSlackMessage } = require('./alert-events');
 const cors = require('cors');
 const app = express();
- 
-app.use(cors());
-app.use(express.json());
 
-app.post('/discord', (req,res)=>{
-    console.log(req.body)
-    sendDiscordMessage(req.body);
-    res.status(200).send()
-});
+try {
+    app.use(cors());
+    app.use(express.json());
 
-app.post('/slack', (req,res)=>{
-    console.log(req)
-    sendSlackMessage(req.body);
-    res.status(200).send()
-});
+    app.post('/discord', (req, res) => {
+        
+        sendDiscordMessage(req.body);
+        res.status(200).send()
+    });
 
-app.listen(5002);
+    app.post('/slack', (req, res) => {
+        
+        sendSlackMessage(req.body);
+        res.status(200).send()
+    });
+
+    app.listen(5002);
+} catch (err) {
+    console.log("timestamp=" + new Date().toISOString(), "level=ERROR", err.message);
+}
+
