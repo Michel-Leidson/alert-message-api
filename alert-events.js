@@ -70,15 +70,24 @@ async function sendDiscordMessage(message) {
                 let aditional_text = appendAdditionDescription(__value_string__, low_condition, high_condition);
 
                 let { value } = formatStringValue(__value_string__);
+
+                let embed;
                 if (typeof value === 'undefined') {
-                    throw new Error('Content of __value_string__ is null!!!')
+                    embed = {
+                        "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
+                        "description": `${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](${ALERT_MANAGER_URL}/#/alerts)`,
+                        "url": `${GRAFANA_URL}/d/${alert.annotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${alert.annotations.__panelId__}`,
+                        "color": (alert.status == 'firing' ? NOTIFY_COLOR_MESSAGE : 4109717)
+                    }
+                } else {
+                    embed = {
+                        "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
+                        "description": `Value: ${value === 'undefined' ? "-" : parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](${ALERT_MANAGER_URL}/#/alerts)`,
+                        "url": `${GRAFANA_URL}/d/${alert.annotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${alert.annotations.__panelId__}`,
+                        "color": (alert.status == 'firing' ? NOTIFY_COLOR_MESSAGE : 4109717)
+                    }
                 }
-                const embed={
-                    "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
-                    "description": `Value: ${value === 'undefined' ? "-" : parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](${ALERT_MANAGER_URL}/#/alerts)`,
-                    "url": `${GRAFANA_URL}/d/${alert.annotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${alert.annotations.__panelId__}`,
-                    "color": (alert.status == 'firing' ? NOTIFY_COLOR_MESSAGE : 4109717)
-                }
+
                 const json = JSON.stringify({
                     "username": "Grafana Alert",
                     "embeds": [embed]
@@ -120,7 +129,13 @@ async function sendSlackMessage(message) {
 
                 let { value } = formatStringValue(__value_string__);
                 if (typeof value === 'undefined') {
-                    throw new Error('Content of __value_string__ is null!!!')
+                    attachments.push({
+                        "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
+                        "text": `${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
+                        "title_link": `${GRAFANA_URL}/d/${alert.annotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${alert.annotations.__panelId__}`,
+                        "color": (alert.status == 'firing' ? '#FA2C23' : "#2DE64F")
+
+                    })
                 }
                 attachments.push({
                     "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
