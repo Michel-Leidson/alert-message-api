@@ -136,16 +136,15 @@ async function sendSlackMessage(message) {
                         "color": (alert.status == 'firing' ? '#FA2C23' : "#2DE64F")
 
                     })
+                }else{
+                    attachments.push({
+                        "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
+                        "text": `Value: ${value === 'undefined' ? "-" : parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
+                        "title_link": `${GRAFANA_URL}/d/${alert.annotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${alert.annotations.__panelId__}`,
+                        "color": (alert.status == 'firing' ? '#FA2C23' : "#2DE64F")
+    
+                    })
                 }
-                attachments.push({
-                    "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
-                    "text": `Value: ${value === 'undefined' ? "-" : parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
-                    "title_link": `${GRAFANA_URL}/d/${alert.annotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${alert.annotations.__panelId__}`,
-                    "color": (alert.status == 'firing' ? '#FA2C23' : "#2DE64F")
-
-                })
-
-
             })
 
             const json = JSON.stringify({
