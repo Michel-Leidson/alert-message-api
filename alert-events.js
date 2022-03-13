@@ -11,7 +11,7 @@ const api = axios.create()
 
 
 function formatStringValue(string_value_text) {
-    if (string_value_text === '') {
+    if (string_value_text === '' | typeof string_value_text === 'undefined') {
         throw new Error('Content of __value_string__ is empty!!!')
     }
     const array_key_values = string_value_text.split(" ");
@@ -68,11 +68,8 @@ async function sendDiscordMessage(message) {
                 const { __value_string__ } = alert.annotations;
                 const { low_condition, high_condition } = alert.labels;
                 let aditional_text = appendAdditionDescription(__value_string__, low_condition, high_condition);
-
-                let { value } = formatStringValue(__value_string__);
-
                 let embed;
-                if (typeof value === 'undefined') {
+                if (typeof __value_string__ === "undefined") {
                     embed = {
                         "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
                         "description": `${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](${ALERT_MANAGER_URL}/#/alerts)`,
@@ -80,6 +77,7 @@ async function sendDiscordMessage(message) {
                         "color": (alert.status == 'firing' ? NOTIFY_COLOR_MESSAGE : 4109717)
                     }
                 } else {
+                    let { value } = formatStringValue(__value_string__);
                     embed = {
                         "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
                         "description": `Value: ${value === 'undefined' ? "-" : parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}\n[Silence Alert](${ALERT_MANAGER_URL}/#/alerts)`,
@@ -107,7 +105,7 @@ async function sendDiscordMessage(message) {
         }
 
     } catch (err) {
-        console.log("timestamp=" + new Date().toISOString(), err.message);
+        console.log("timestamp=" + new Date().toISOString(), err.message, "error=" + err);
     }
 
 }
@@ -126,17 +124,16 @@ async function sendSlackMessage(message) {
                 const { __value_string__ } = alert.annotations;
                 const { low_condition, high_condition } = alert.labels;
                 let aditional_text = appendAdditionDescription(__value_string__, low_condition, high_condition);
-
-                let { value } = formatStringValue(__value_string__);
-                if (typeof value === 'undefined') {
+                if (typeof __value_string__ === "undefined") {
+                    
                     attachments.push({
                         "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
                         "text": `${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
                         "title_link": `${GRAFANA_URL}/d/${alert.annotations.__dashboardUid__}?orgId=1&refresh=5s&viewPanel=${alert.annotations.__panelId__}`,
                         "color": (alert.status == 'firing' ? '#FA2C23' : "#2DE64F")
-
                     })
                 }else{
+                    let { value } = formatStringValue(__value_string__);
                     attachments.push({
                         "title": `(${alert.status.toUpperCase()}) ${alert.labels.alertname.toUpperCase()} ${aditional_text}`,
                         "text": `Value: ${value === 'undefined' ? "-" : parseFloat(value).toFixed(2)}\n${typeof alert.annotations.summary === 'undefined' ? "" : alert.annotations.summary}`,
